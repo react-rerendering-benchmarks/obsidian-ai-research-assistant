@@ -1,27 +1,25 @@
-import React from 'react'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import { useLoading, Oval } from '@agney/react-loading'
-
-import InputArea from './InputArea'
-import IconButton from './IconButton'
-import ConversationSettings from './ConversationSettings'
-
-import type { Conversation } from '../services/conversation'
-
+import { memo } from "react";
+import React from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useLoading, Oval } from '@agney/react-loading';
+import InputArea from './InputArea';
+import IconButton from './IconButton';
+import ConversationSettings from './ConversationSettings';
+import type { Conversation } from '../services/conversation';
 export interface ChatInputProps {
-  prompt: string
-  onPromptChange: React.Dispatch<React.SetStateAction<string>>
-  onPromptSubmit: (event: React.FormEvent) => void
-  cancelPromptSubmit: (event: React.FormEvent) => void
-  conversation: Conversation | null
-  preamble?: string
-  onPreambleChange?: React.Dispatch<React.SetStateAction<string>>
-  busy?: boolean
+  prompt: string;
+  onPromptChange: React.Dispatch<React.SetStateAction<string>>;
+  onPromptSubmit: (event: React.FormEvent) => void;
+  cancelPromptSubmit: (event: React.FormEvent) => void;
+  conversation: Conversation | null;
+  preamble?: string;
+  onPreambleChange?: React.Dispatch<React.SetStateAction<string>>;
+  busy?: boolean;
 }
 
 // create a chat interface that sends user input to the openai api via the openai package
 // and displays the response from openai
-const ChatInput = ({
+const ChatInput = memo(({
   onPromptChange,
   onPreambleChange,
   onPromptSubmit,
@@ -31,17 +29,14 @@ const ChatInput = ({
   busy = false,
   conversation
 }: ChatInputProps): React.ReactElement => {
-  const { containerProps, indicatorEl } = useLoading({
+  const {
+    containerProps,
+    indicatorEl
+  } = useLoading({
     loading: busy,
     indicator: <Oval width="20" />
-  })
-
-  return (
-    <form
-      className="ai-research-assistant__chat-form"
-      onSubmit={onPromptSubmit}
-      autoCapitalize="off"
-      noValidate>
+  });
+  return <form className="ai-research-assistant__chat-form" onSubmit={onPromptSubmit} autoCapitalize="off" noValidate>
       <Tabs className="ai-research-assistant__chat-form__tabs" defaultIndex={0}>
         <TabList>
           <Tab>Prompt</Tab>
@@ -50,39 +45,18 @@ const ChatInput = ({
         </TabList>
 
         <TabPanel>
-          <InputArea
-            value={prompt}
-            onChange={onPromptChange}
-            countType="tokens"
-            countPosition="top"
-            countAlign="right"
-          />
-          <IconButton
-            iconName={busy ? 'ban' : 'send'}
-            a11yText={busy ? 'Cancel' : 'Send'}
-            buttonStyle={busy ? 'danger' : 'primary'}
-            type={busy ? 'button' : 'submit'}
-            onClick={busy ? cancelPromptSubmit : () => {}}
-            className="ai-research-assistant__chat__input__send"
-            {...containerProps}>
+          <InputArea value={prompt} onChange={onPromptChange} countType="tokens" countPosition="top" countAlign="right" />
+          <IconButton iconName={busy ? 'ban' : 'send'} a11yText={busy ? 'Cancel' : 'Send'} buttonStyle={busy ? 'danger' : 'primary'} type={busy ? 'button' : 'submit'} onClick={busy ? cancelPromptSubmit : () => {}} className="ai-research-assistant__chat__input__send" {...containerProps}>
             {indicatorEl}
           </IconButton>
         </TabPanel>
         <TabPanel>
-          <InputArea
-            value={preamble}
-            onChange={onPreambleChange}
-            countType="tokens"
-            countPosition="top"
-            countAlign="right"
-          />
+          <InputArea value={preamble} onChange={onPreambleChange} countType="tokens" countPosition="top" countAlign="right" />
         </TabPanel>
         <TabPanel>
           <ConversationSettings conversation={conversation} />
         </TabPanel>
       </Tabs>
-    </form>
-  )
-}
-
-export default ChatInput
+    </form>;
+});
+export default ChatInput;
